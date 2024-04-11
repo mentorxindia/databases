@@ -1,8 +1,9 @@
 CREATE TABLE `users` (
   `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(127) NOT NULL,
-  `email` varchar(127) UNIQUE NOT NULL,
   `gender` enum('MALE', 'FEMALE', 'OTHER') NOT NULL,
+  `email` varchar(127) UNIQUE NOT NULL,
+  `mobile` varchar(15) UNIQUE NOT NULL,
   `password` varchar(255) NOT NULL,
   `otp` varchar(7),
   `created_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
@@ -20,13 +21,13 @@ CREATE TABLE `product_categories` (
 CREATE TABLE `products` (
   `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
-  `description` text,
+  `description` text NOT NULL,
   `sku` varchar(50) UNIQUE NOT NULL,
   `barcode` varchar(50) UNIQUE NOT NULL,
   `mrp` decimal(10,2) NOT NULL,
   `selling_price` decimal(10,2) NOT NULL,
   `stock_quantity` int NOT NULL,
-  `product_category_id` INT,
+  `product_category_id` INT NOT NULL,
   `created_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
   `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
   FOREIGN KEY (`product_category_id`) REFERENCES `product_categories` (`id`)
@@ -39,8 +40,8 @@ CREATE TABLE `discounts` (
   `value` DECIMAL(10,2) NOT NULL,
   `min_order_amount` DECIMAL(10,2) DEFAULT 0,
   `max_discount_amount` DECIMAL(10,2),
-  `start_date` TIMESTAMP,
-  `end_date` TIMESTAMP,
+  `start_date` TIMESTAMP NOT NULL,
+  `end_date` TIMESTAMP NOT NULL,
   `created_at` TIMESTAMP DEFAULT (CURRENT_TIMESTAMP),
   `updated_at` TIMESTAMP DEFAULT (CURRENT_TIMESTAMP)
 );
@@ -53,14 +54,36 @@ CREATE TABLE `discount_products` (
   FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
 );
 
+CREATE TABLE `carts` (
+  `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `status` enum(ACTIVE,INACTIVE) DEFAULT 'ACTIVE',
+  `created_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+  `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);
+
+CREATE TABLE `cart_items` (
+  `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `cart_id` int NOT NULL,
+  `product_id` int NOT NULL,
+  `quantity` int NOT NULL,
+  `created_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+  `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+   FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`)
+);
+
 CREATE TABLE `orders` (
   `id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  `user_id` int,
+  `user_id` int NOT NULL,
+  `cart_id` int NOT NULL,
   `total_amount` decimal(10,2) NOT NULL,
   `status` enum('PENDING', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
   `created_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
   `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
-  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`)
+
 );
 
 CREATE TABLE `order_items` (
