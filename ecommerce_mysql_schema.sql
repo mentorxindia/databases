@@ -10,6 +10,23 @@ CREATE TABLE `users` (
   `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP)
 );
 
+CREATE TABLE `user_addresses` (
+  `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `user_id` int,
+  `address_line_1` varchar(255) NOT NULL,
+  `address_line_2` varchar(255),
+  `landmark` varchar(255),
+  `city` varchar(100) NOT NULL,
+  `state` varchar(100) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `pincode` varchar(20) NOT NULL,
+  `is_default` boolean DEFAULT false,
+  `created_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+  `updated_at` timestamp DEFAULT (CURRENT_TIMESTAMP),
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+
+);
+
 CREATE TABLE `product_categories` (
   `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
