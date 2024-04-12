@@ -123,7 +123,7 @@ SELECT * FROM users WHERE created_at = (SELECT MAX(created_at) FROM users);
 SELECT * FROM users WHERE name LIKE 'Shilpa%' AND gender = 'F';
 
 -- Select users with names starting with 'a' or 'b'
-SELECT * FROM users WHERE name LIKE 'a%' OR name LIKE 'b%';` 
+SELECT * FROM users WHERE name LIKE 'a%' OR name LIKE 'b%';
 
 -- Select users with names containing 'dora'
 SELECT * FROM users WHERE name LIKE '%dora%';
